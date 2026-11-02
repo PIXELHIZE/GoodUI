@@ -1,0 +1,35 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{jsx,tsx,vue,svelte}"],
+  "rules": [
+    {
+      "id": "use-design-system-elements",
+      "kind": "restricted-ui",
+      "tags": ["button", "input"],
+      "reason": "버튼과 입력은 공용 디자인 시스템 컴포넌트로 구성합니다.",
+      "suggestion": "공용 Button과 TextInput을 사용하세요."
+    },
+    {
+      "id": "consistent-ui-features",
+      "kind": "restricted-ui",
+      "features": ["inline-style", "raw-html"],
+      "reason": "UI는 승인된 스타일과 명시적인 요소로 구성합니다.",
+      "suggestion": "클래스와 스타일 토큰을 사용하고 HTML 문자열 대신 컴포넌트를 렌더링하세요."
+    },
+    {
+      "id": "retire-legacy-components",
+      "kind": "restricted-ui",
+      "components": [{ "source": "@legacy/ui", "names": ["*"] }],
+      "reason": "기존 UI 라이브러리의 컴포넌트를 새 화면에서 사용하지 않습니다.",
+      "suggestion": "현재 공용 디자인 시스템의 대응 컴포넌트를 사용하세요."
+    }
+  ],
+  "exceptions": [
+    {
+      "ruleId": "use-design-system-elements",
+      "files": ["src/design-system/**"],
+      "reason": "공용 컴포넌트의 구현부에서는 native 요소를 감쌉니다."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "goodui-tailwind-test-fixture",
+  "private": true,
+  "type": "module",
+  "dependencies": { "tailwindcss": "^4.3.3" }
+}

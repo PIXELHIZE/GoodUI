@@ -1,0 +1,51 @@
+{
+  "name": "@pixelhize/goodui-mcp",
+  "version": "0.4.0",
+  "description": "Local MCP tools for GoodUI project policies and deterministic lint checks",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "goodui-mcp": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run test"
+  },
+  "dependencies": {
+    "@pixelhize/goodui-core": "workspace:*",
+    "@pixelhize/eslint-plugin-goodui": "workspace:*",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.0.0",
+    "eslint": "^9.39.0 || ^10.0.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  },
+  "keywords": [
+    "goodui",
+    "mcp",
+    "ai",
+    "lint",
+    "policy"
+  ]
+}

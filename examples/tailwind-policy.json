@@ -1,0 +1,26 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{js,jsx,ts,tsx,vue,svelte}"],
+  "presets": ["tailwind"],
+  "rules": [],
+  "tailwind": {
+    "rules": ["no-raw-colors", "no-arbitrary-values", "no-inline-styles", "no-unknown-classes", "no-restyle", "require-static-classes"],
+    "themeFiles": ["examples/tailwind-theme.css"],
+    "componentImports": ["@/components/ui/**", "@app/ui", "@app/ui/**"],
+    "ignoreImports": ["@vendor/chart/**"],
+    "allowClasses": ["app-shell"],
+    "denyClasses": ["legacy-*"],
+    "allowArbitrary": ["w-[var(--sidebar-width)]"],
+    "classFunctions": ["mergeClasses"],
+    "variantFunctions": ["buttonVariants"],
+    "note": "프로젝트의 토큰과 공용 컴포넌트 API를 사용하세요."
+  },
+  "exceptions": [
+    {
+      "ruleId": "goodui/no-restyle",
+      "files": ["src/components/ui/**"],
+      "reason": "공용 컴포넌트 구현부가 내부 표현을 정의합니다."
+    }
+  ]
+}

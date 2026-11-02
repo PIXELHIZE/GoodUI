@@ -1,0 +1,67 @@
+{
+  "name": "@pixelhize/goodui-cli",
+  "version": "0.4.0",
+  "description": "Deterministic project policy checks for AI-assisted JavaScript and TypeScript development",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "bin": {
+    "goodui": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js"
+    },
+    "./schema.json": "./schema.json",
+    "./SETUP.md": "./SETUP.md",
+    "./docs/*": "./docs/*",
+    "./examples/*": "./examples/*"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "schema.json",
+    "SETUP.md",
+    "docs",
+    "examples"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-schema.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pixelhize/goodui-core": "workspace:^",
+    "@pixelhize/eslint-plugin-goodui": "workspace:^",
+    "@pixelhize/goodui-mcp": "workspace:^",
+    "@clack/prompts": "^1.8.1",
+    "cross-spawn": "^7.0.6",
+    "semver": "^7.7.3",
+    "eslint": "^9.39.0 || ^10.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  },
+  "keywords": [
+    "goodui",
+    "lint",
+    "cli",
+    "ai",
+    "policy",
+    "javascript",
+    "typescript"
+  ],
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/semver": "^7.7.1"
+  }
+}

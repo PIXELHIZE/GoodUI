@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@plugin "../tailwind-plugin.mjs";
+@import "./tokens.css";
+
+@theme {
+  --color-brand: #ff0000;
+  --color-brand-foreground: #ffffff;
+}
+
+.vendor\:card { display: block; }
+.커스텀 { display: block; }
+.ordinary-custom { display: block; }

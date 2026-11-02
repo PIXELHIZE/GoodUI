@@ -1,0 +1,49 @@
+{
+  "name": "@pixelhize/goodui-core",
+  "version": "0.4.0",
+  "license": "MIT",
+  "description": "Shared policy contracts and storage for GoodUI",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema.json": "./schema.json"
+  },
+  "files": [
+    "dist",
+    "schema.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "esquery": "^1.6.0",
+    "minimatch": "^10.0.3"
+  },
+  "devDependencies": {
+    "@types/esquery": "^1.5.4"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=24"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  },
+  "keywords": [
+    "goodui",
+    "lint",
+    "policy",
+    "javascript",
+    "typescript"
+  ]
+}

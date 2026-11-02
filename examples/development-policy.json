@@ -1,0 +1,52 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte}", "tests/**/*.{js,ts}"],
+  "rules": [
+    {
+      "id": "explicit-types",
+      "kind": "restricted-syntax",
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "selectors": ["TSAnyKeyword"],
+      "reason": "애플리케이션 데이터의 타입을 코드에 명시합니다.",
+      "suggestion": "구체적인 타입 또는 unknown과 narrowing을 사용하세요."
+    },
+    {
+      "id": "test-file-conventions",
+      "kind": "file-conventions",
+      "files": ["tests/**"],
+      "nameCase": "kebab",
+      "suffixes": [".test.ts", ".spec.ts", ".test.js", ".spec.js"],
+      "maxLines": 400,
+      "maxBytes": 30000,
+      "reason": "테스트 파일 이름과 크기를 예측 가능하게 유지합니다."
+    },
+    {
+      "id": "route-exports",
+      "kind": "export-contracts",
+      "files": ["src/routes/**/*.{js,ts}"],
+      "requireNamed": ["handler"],
+      "forbidDefault": true,
+      "forbidStar": true,
+      "reason": "라우트 파일은 명시적인 handler entry를 제공합니다."
+    },
+    {
+      "id": "reviewable-functions",
+      "kind": "function-limits",
+      "maxParams": 4,
+      "maxLines": 80,
+      "maxStatements": 30,
+      "maxDepth": 4,
+      "maxComplexity": 12,
+      "reason": "함수 하나를 독립적으로 읽고 검증할 수 있게 유지합니다.",
+      "suggestion": "책임을 나누고 중첩된 분기는 작은 함수로 분리하세요."
+    }
+  ],
+  "exceptions": [
+    {
+      "ruleId": "explicit-types",
+      "files": ["src/vendor-adapters/**"],
+      "reason": "검토한 외부 API 경계에서 점진적으로 타입을 좁힙니다."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{jsx,tsx,vue,svelte}"],
+  "rules": [
+    {
+      "id": "native-button-props",
+      "kind": "component-contracts",
+      "tags": ["button"],
+      "requiredProps": ["type", "aria-label"],
+      "nonEmptyProps": ["aria-label"],
+      "propValues": { "type": ["button", "submit", "reset"] },
+      "reason": "버튼의 동작과 이름을 명시적으로 선택합니다."
+    },
+    {
+      "id": "shared-button-api",
+      "kind": "component-contracts",
+      "components": [{ "source": "@app/ui", "names": ["Button"] }],
+      "requiredProps": ["variant", "size"],
+      "forbiddenProps": ["style"],
+      "propValues": {
+        "variant": ["primary", "secondary", "danger"],
+        "size": ["sm", "md", "lg"]
+      },
+      "reason": "공용 버튼은 프로젝트가 승인한 variant와 size를 사용합니다.",
+      "suggestion": "공용 Button API를 사용하고 새 표현은 디자인 시스템에서 정의하세요."
+    }
+  ]
+}

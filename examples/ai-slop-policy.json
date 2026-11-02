@@ -1,0 +1,28 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{js,jsx,ts,tsx,vue,svelte}"],
+  "aiSlop": {
+    "enabled": true,
+    "rules": {
+      "no-emoji-icons": false,
+      "no-nested-cards": true,
+      "no-generic-fonts": true
+    },
+    "allowFonts": ["Inter"],
+    "allowPhrases": ["Unlock your potential"],
+    "ignores": ["src/generated/**"],
+    "note": "기존 브랜드에서 승인한 표현과 컴포넌트를 사용하세요."
+  },
+  "rules": [{
+    "id": "no-eval",
+    "kind": "restricted-api",
+    "globals": ["eval"],
+    "reason": "문자열을 코드로 실행하지 않습니다."
+  }],
+  "exceptions": [{
+    "ruleId": "goodui/no-placeholder-copy",
+    "files": ["src/examples/**"],
+    "reason": "문구 편집기의 예제 화면에서 의도적으로 사용합니다."
+  }]
+}

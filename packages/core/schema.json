@@ -1,0 +1,870 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:goodui:policy:v1",
+  "title": "GoodUI policy",
+  "description": "Deterministic project contracts shared by GoodUI CLI, ESLint and MCP.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "rules"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "files": {
+      "$ref": "#/definitions/patterns"
+    },
+    "ignores": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/nonblank"
+      },
+      "uniqueItems": true
+    },
+    "presets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "tailwind",
+          "ai-slop"
+        ]
+      }
+    },
+    "tailwind": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "description": "Native GoodUI design-system checks. Defaults to color, arbitrary-value, inline-style and unknown-class checks.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "no-raw-colors",
+              "no-arbitrary-values",
+              "no-inline-styles",
+              "no-unknown-classes",
+              "no-restyle",
+              "require-static-classes"
+            ]
+          }
+        },
+        "themeFiles": {
+          "$ref": "#/definitions/patterns"
+        },
+        "allowClasses": {
+          "$ref": "#/definitions/patterns"
+        },
+        "denyClasses": {
+          "$ref": "#/definitions/patterns"
+        },
+        "allowArbitrary": {
+          "$ref": "#/definitions/patterns"
+        },
+        "classFunctions": {
+          "$ref": "#/definitions/patterns"
+        },
+        "variantFunctions": {
+          "$ref": "#/definitions/patterns"
+        },
+        "componentImports": {
+          "$ref": "#/definitions/patterns"
+        },
+        "ignoreImports": {
+          "$ref": "#/definitions/patterns"
+        },
+        "note": {
+          "$ref": "#/definitions/nonblank"
+        }
+      }
+    },
+    "aiSlop": {
+      "description": "Optional source checks for repeated AI-generated design patterns. Configuration alone does not enable the group.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Explicitly enable or disable the group, overriding the ai-slop preset. Existing policies remain disabled unless opted in.",
+          "type": "boolean"
+        },
+        "rules": {
+          "description": "Boolean overrides for individual checks. The first ten checks default to enabled; nested cards, oversized radius and generic fonts are opt-in.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "no-gradient-text": { "type": "boolean" },
+            "no-purple-gradients": { "type": "boolean" },
+            "no-glassmorphism": { "type": "boolean" },
+            "no-decorative-blobs": { "type": "boolean" },
+            "no-hover-lift": { "type": "boolean" },
+            "no-bounce-animation": { "type": "boolean" },
+            "no-emoji-icons": { "type": "boolean" },
+            "no-generic-copy": { "type": "boolean" },
+            "no-placeholder-copy": { "type": "boolean" },
+            "no-placeholder-links": { "type": "boolean" },
+            "no-nested-cards": { "type": "boolean" },
+            "no-oversized-radius": { "type": "boolean" },
+            "no-generic-fonts": { "type": "boolean" }
+          }
+        },
+        "files": {
+          "description": "Project-relative source globs checked by this group, within the global policy file scope.",
+          "$ref": "#/definitions/patterns"
+        },
+        "ignores": {
+          "description": "Project-relative source globs excluded from this group.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/nonblank" }
+        },
+        "allowClasses": {
+          "description": "Explicit class patterns allowed by the group's class-based checks.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/nonblank" }
+        },
+        "allowPhrases": {
+          "description": "Explicit phrases allowed by text checks; project-authored values are preserved without translation.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/nonblank" }
+        },
+        "allowFonts": {
+          "description": "Explicit font-family names allowed by the generic-font check.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/nonblank" }
+        },
+        "note": { "$ref": "#/definitions/nonblank" }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/restrictedImports"
+          },
+          {
+            "$ref": "#/definitions/restrictedApi"
+          },
+          {
+            "$ref": "#/definitions/importBoundaries"
+          },
+          {
+            "$ref": "#/definitions/restrictedUi"
+          },
+          {
+            "$ref": "#/definitions/restrictedSyntax"
+          },
+          {
+            "$ref": "#/definitions/fileConventions"
+          },
+          {
+            "$ref": "#/definitions/exportContracts"
+          },
+          {
+            "$ref": "#/definitions/functionLimits"
+          },
+          {
+            "$ref": "#/definitions/componentContracts"
+          }
+        ]
+      }
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ruleId",
+          "files",
+          "reason"
+        ],
+        "properties": {
+          "ruleId": {
+            "$ref": "#/definitions/nonblank"
+          },
+          "files": {
+            "$ref": "#/definitions/patterns"
+          },
+          "reason": {
+            "$ref": "#/definitions/nonblank"
+          }
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "tailwind": [
+      "presets"
+    ]
+  },
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {
+            "required": ["presets"],
+            "properties": {
+              "presets": {
+                "contains": { "enum": ["tailwind", "ai-slop"] }
+              }
+            }
+          },
+          {
+            "required": ["aiSlop"],
+            "properties": {
+              "aiSlop": {
+                "required": ["enabled"],
+                "properties": { "enabled": { "const": true } }
+              }
+            }
+          }
+        ]
+      },
+      "then": {},
+      "else": {
+        "properties": {
+          "rules": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "nonblank": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "patterns": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/nonblank"
+      }
+    },
+    "stringOrStrings": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonblank"
+        },
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/nonblank"
+          }
+        }
+      ]
+    },
+    "importedNames": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "names"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "names": {
+          "$ref": "#/definitions/patterns"
+        }
+      }
+    },
+    "restrictedImports": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason",
+        "modules"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "restricted-imports"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "modules": {
+          "$ref": "#/definitions/patterns"
+        }
+      }
+    },
+    "restrictedApi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "globals"
+          ]
+        },
+        {
+          "required": [
+            "imports"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "restricted-api"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "globals": {
+          "$ref": "#/definitions/patterns"
+        },
+        "imports": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/importedNames"
+          }
+        }
+      }
+    },
+    "importBoundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason",
+        "from"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "allow"
+          ]
+        },
+        {
+          "required": [
+            "disallow"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "import-boundaries"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "from": {
+          "$ref": "#/definitions/patterns"
+        },
+        "allow": {
+          "$ref": "#/definitions/patterns"
+        },
+        "disallow": {
+          "$ref": "#/definitions/patterns"
+        }
+      }
+    },
+    "restrictedUi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "tags"
+          ]
+        },
+        {
+          "required": [
+            "components"
+          ]
+        },
+        {
+          "required": [
+            "attributes"
+          ]
+        },
+        {
+          "required": [
+            "features"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "restricted-ui"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "tags": {
+          "$ref": "#/definitions/patterns"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/importedNames"
+          }
+        },
+        "attributes": {
+          "$ref": "#/definitions/patterns"
+        },
+        "features": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "inline-style",
+              "raw-html"
+            ]
+          }
+        }
+      }
+    },
+    "restrictedSyntax": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason",
+        "selectors"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "restricted-syntax"
+        },
+        "selectors": {
+          "$ref": "#/definitions/patterns"
+        }
+      }
+    },
+    "fileConventions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "file-conventions"
+        },
+        "nameCase": {
+          "enum": [
+            "kebab",
+            "camel",
+            "pascal",
+            "snake"
+          ],
+          "description": "Case of the filename stem after removing the source extension and repeated .test/.spec/.d/.svelte suffixes."
+        },
+        "suffixes": {
+          "$ref": "#/definitions/patterns",
+          "description": "Case-sensitive literal endings of the original basename; no implicit dots or globs."
+        },
+        "maxLines": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum physical source lines. Empty source has zero lines; a final newline does not add a line."
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum UTF-8 source bytes, including a leading BOM."
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "nameCase"
+          ]
+        },
+        {
+          "required": [
+            "suffixes"
+          ]
+        },
+        {
+          "required": [
+            "maxLines"
+          ]
+        },
+        {
+          "required": [
+            "maxBytes"
+          ]
+        }
+      ]
+    },
+    "exportContracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "export-contracts"
+        },
+        "requireNamed": {
+          "$ref": "#/definitions/patterns",
+          "description": "Required explicit ESM export names. Bare export-star does not prove required names."
+        },
+        "forbidDefault": {
+          "type": "boolean"
+        },
+        "forbidStar": {
+          "type": "boolean"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "requireNamed"
+          ]
+        },
+        {
+          "required": [
+            "forbidDefault"
+          ],
+          "properties": {
+            "forbidDefault": {
+              "const": true
+            }
+          }
+        },
+        {
+          "required": [
+            "forbidStar"
+          ],
+          "properties": {
+            "forbidStar": {
+              "const": true
+            }
+          }
+        }
+      ]
+    },
+    "functionLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "function-limits"
+        },
+        "maxParams": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum parameters in a function signature, including rest/default parameters."
+        },
+        "maxLines": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum inclusive source lines for the function node, including its signature."
+        },
+        "maxStatements": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum statements in this function body, excluding nested function bodies."
+        },
+        "maxDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum nested if/loop/switch/try/with depth; ordinary braces do not increase depth."
+        },
+        "maxComplexity": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Cyclomatic base 1 plus branching, logical/default/optional-chain decisions; nested functions are measured independently."
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "maxParams"
+          ]
+        },
+        {
+          "required": [
+            "maxLines"
+          ]
+        },
+        {
+          "required": [
+            "maxStatements"
+          ]
+        },
+        {
+          "required": [
+            "maxDepth"
+          ]
+        },
+        {
+          "required": [
+            "maxComplexity"
+          ]
+        }
+      ]
+    },
+    "componentContracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "files": {
+          "$ref": "#/definitions/patterns"
+        },
+        "reason": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "suggestion": {
+          "$ref": "#/definitions/nonblank"
+        },
+        "kind": {
+          "const": "component-contracts"
+        },
+        "tags": {
+          "$ref": "#/definitions/patterns"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/importedNames"
+          }
+        },
+        "requiredProps": {
+          "$ref": "#/definitions/patterns",
+          "description": "Props that must be present on each targeted component."
+        },
+        "forbiddenProps": {
+          "$ref": "#/definitions/patterns"
+        },
+        "nonEmptyProps": {
+          "$ref": "#/definitions/patterns",
+          "description": "If present, values must be nonblank strings or finite numbers. Combine with requiredProps to require presence."
+        },
+        "propValues": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "$ref": "#/definitions/nonblank"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "description": "Allowed typed primitive values for present props. Combine with requiredProps to require presence."
+        },
+        "allowDynamicProps": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow unknown checked values and spreads. Unknown spreads may supply otherwise missing required props."
+        }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "required": [
+                "tags"
+              ]
+            },
+            {
+              "required": [
+                "components"
+              ]
+            }
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "requiredProps"
+              ]
+            },
+            {
+              "required": [
+                "forbiddenProps"
+              ]
+            },
+            {
+              "required": [
+                "nonEmptyProps"
+              ]
+            },
+            {
+              "required": [
+                "propValues"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

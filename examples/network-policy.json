@@ -1,0 +1,42 @@
+{
+  "$schema": "../packages/core/schema.json",
+  "version": 1,
+  "files": ["src/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte}"],
+  "rules": [
+    {
+      "id": "approved-network-imports",
+      "kind": "restricted-imports",
+      "modules": ["axios", "node:http", "node:https", "http", "https"],
+      "reason": "네트워크 라이브러리는 지정한 네트워크 계층에서만 사용합니다.",
+      "suggestion": "src/network의 공용 클라이언트를 사용하세요."
+    },
+    {
+      "id": "approved-network-api",
+      "kind": "restricted-api",
+      "globals": ["fetch", "XMLHttpRequest", "WebSocket"],
+      "imports": [{ "source": "node:net", "names": ["connect", "createConnection"] }],
+      "reason": "직접 통신하는 대신 프로젝트의 공용 네트워크 클라이언트를 거칩니다.",
+      "suggestion": "접속 대상과 인증을 관리하는 공용 네트워크 함수를 호출하세요."
+    },
+    {
+      "id": "ui-server-boundary",
+      "kind": "import-boundaries",
+      "from": ["src/ui/**", "src/components/**"],
+      "disallow": ["src/server/**"],
+      "reason": "UI는 서버 구현에 직접 의존하지 않습니다.",
+      "suggestion": "공용 서비스 인터페이스를 통해 접근하세요."
+    }
+  ],
+  "exceptions": [
+    {
+      "ruleId": "approved-network-imports",
+      "files": ["src/network/**"],
+      "reason": "승인된 네트워크 계층에서만 실제 통신 라이브러리를 구성합니다."
+    },
+    {
+      "ruleId": "approved-network-api",
+      "files": ["src/network/**"],
+      "reason": "승인된 네트워크 계층은 실제 통신 API를 호출해야 합니다."
+    }
+  ]
+}
